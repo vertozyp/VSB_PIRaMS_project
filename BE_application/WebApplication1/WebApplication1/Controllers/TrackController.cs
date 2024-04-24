@@ -14,7 +14,7 @@ namespace WebApplication1.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "track")]
+        [HttpGet("/track")]
         public List<Track> GetTrack(string? name, string? composer)
         {
             return DatabaseHandler.GetAll<Track>();

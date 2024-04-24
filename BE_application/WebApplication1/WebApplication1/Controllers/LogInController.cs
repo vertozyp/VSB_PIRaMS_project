@@ -14,7 +14,7 @@ namespace WebApplication1.Controllers
             _logger = logger;
         }
 
-        [HttpPost(Name = "login")]
+        [HttpPost("/login")]
         public Right LogIn([FromBody] Credentials credentials)
         {
             Employee? employee = DatabaseHandler.GetByProperty<Employee>("Email", credentials.Username);

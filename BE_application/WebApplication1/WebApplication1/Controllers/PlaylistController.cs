@@ -15,7 +15,7 @@ namespace WebApplication1.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "playlist")]
+        [HttpGet("/playlist")]
         public List<PlaylistWithTracks> GetPlaylist(string? playlistName, string? trackName, string? trackComposer)
         {
             Right? right = Right.parseRequestAuthentication(Request);
@@ -33,7 +33,7 @@ namespace WebApplication1.Controllers
             return playlistWithTracks;
         }
 
-        [HttpPost(Name = "playlist")]
+        [HttpPost("/playlist")]
         public PlaylistWithTracks? CreatePlaylist([FromBody] PlaylistRequest playlistRequest)
         {
             Right? right = Right.parseRequestAuthentication(Request);
@@ -61,6 +61,64 @@ namespace WebApplication1.Controllers
             {
                 Response.StatusCode = 400;
                 return null;
+            }
+        }
+
+        [HttpGet("/playlist/{playlistId}")]
+        public PlaylistWithTracks? GetPlaylistById([FromRoute] int playlistId)
+        {
+            Right? right = Right.parseRequestAuthentication(Request);
+            Playlist? playlist = DatabaseHandler.GetById<Playlist>(playlistId);
+
+            if (playlist == null)
+            {
+                Response.StatusCode = 404;
+                return null;
+            }
+            else if(playlist.CustomerId == null)
+            {
+                return new PlaylistWithTracks(playlist);
+            }
+            else
+            {
+                if (right != null && !right.IsEmployee && right.UserId == playlist.CustomerId)
+                {
+                    return new PlaylistWithTracks(playlist);
+                } else
+                {
+                    Response.StatusCode = 401;
+                    return null;
+                }
+            }
+        }
+
+        [HttpDelete("/playlist/{playlistId}")]
+        public void DeletePlaylistById([FromRoute] int playlistId)
+        {
+            Right? right = Right.parseRequestAuthentication(Request);
+            Playlist? playlist = DatabaseHandler.GetById<Playlist>(playlistId);
+
+            if (playlist == null)
+            {
+                Response.StatusCode = 404;
+                return;
+            }
+            else if (right == null || (right.IsEmployee && playlist.CustomerId != null) || (!right.IsEmployee && right.UserId != playlist.CustomerId))
+            {
+                Response.StatusCode = 401;
+                return;
+            }
+            else
+            {
+                PlaylistWithTracks playlistWithTracks = new PlaylistWithTracks(playlist);
+                foreach(int trackId in playlistWithTracks.TrackIds)
+                {
+                    DatabaseHandler.DeleteByParams("PlaylistTrack", "playlistId", playlistId, "trackId", trackId);
+                }
+                DatabaseHandler.Delete<Playlist>(playlist);
+
+                Response.StatusCode = 204;
+                return;
             }
         }
 

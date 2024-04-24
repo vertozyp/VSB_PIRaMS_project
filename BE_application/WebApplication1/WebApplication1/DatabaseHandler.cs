@@ -11,6 +11,7 @@ using System.Reflection;
 using WebApplication1.Classes;
 using ISession = NHibernate.ISession;
 using NHibernate.Criterion;
+using NHibernate.Mapping;
 
 namespace WebApplication1
 {
@@ -111,6 +112,17 @@ namespace WebApplication1
                 .List<T>();
         }
 
+        public static List<T> GetListByPropertiesAnd<T>(string property1Name, object value1, string property2Name, object value2) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return (List<T>)session.CreateCriteria<T>()
+                .Add(Restrictions.And(
+                    Restrictions.Eq(property1Name, value1),
+                    Restrictions.Eq(property2Name, value2)
+                    ))
+                .List<T>();
+        }
+
         public static List<T> GetListIfEmpty<T>(string propertyName) where T : class
         {
             var session = SessionFactory.OpenSession();
@@ -140,6 +152,29 @@ namespace WebApplication1
             int? objId =  (int?) session.Save(obj);
             tx.Commit();
             return objId;
+        }
+
+        public static void Delete<T>(T obj) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            var tx = session.BeginTransaction();
+            session.Delete(obj);
+            tx.Commit();
+            return ;
+        }
+
+        public static void DeleteByParams(string table, string property1Name, object value1, string property2Name, object value2)
+        {
+            string query = "DELETE FROM " + table + " WHERE " + property1Name + "=:value1 AND " + property2Name + "=:value2";
+            var session = SessionFactory.OpenSession();
+            var tx = session.BeginTransaction();
+
+            session.CreateSQLQuery(query)
+            .SetParameter("value1", value1)
+            .SetParameter("value2", value2)
+            .ExecuteUpdate();
+            tx.Commit();
+            return;
         }
 
     }
