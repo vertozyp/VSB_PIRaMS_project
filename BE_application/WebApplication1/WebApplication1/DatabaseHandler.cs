@@ -89,6 +89,36 @@ namespace WebApplication1
                 .List<T>();
         }
 
+        public static List<T> GetListByPropertyOrEmpty<T>(string propertyName, object value) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return (List<T>)session.CreateCriteria<T>()
+                .Add(Restrictions.Or(
+                    Restrictions.Eq(propertyName, value),
+                    Restrictions.IsNull(propertyName)
+                    ))
+                .List<T>();
+        }
+
+        public static List<T> GetListByPropertiesOr<T>(string property1Name, object value1, string property2Name, object value2) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return (List<T>)session.CreateCriteria<T>()
+                .Add(Restrictions.Or(
+                    Restrictions.Eq(property1Name, value1), 
+                    Restrictions.Eq(property2Name, value2)
+                    ))
+                .List<T>();
+        }
+
+        public static List<T> GetListIfEmpty<T>(string propertyName) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return (List<T>)session.CreateCriteria<T>()
+                .Add(Restrictions.IsNull(propertyName))
+                .List<T>();
+        }
+
         public static List<T> GetAll<T>() where T : class
         {
             var session = SessionFactory.OpenSession();
