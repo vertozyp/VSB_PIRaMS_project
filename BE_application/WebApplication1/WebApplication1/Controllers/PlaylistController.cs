@@ -34,9 +34,14 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost(Name = "playlist")]
-        public PlaylistWithTracks CreatePlaylist([FromBody] PlaylistRequest playlistRequest)
+        public PlaylistWithTracks? CreatePlaylist([FromBody] PlaylistRequest playlistRequest)
         {
             Right? right = Right.parseRequestAuthentication(Request);
+            if(right == null)
+            {
+                Response.StatusCode = 401;
+                return null;
+            }
 
             int? playlistId;
             if (right != null && !right.IsEmployee)
@@ -55,7 +60,7 @@ namespace WebApplication1.Controllers
             }else
             {
                 Response.StatusCode = 400;
-                return new PlaylistWithTracks();
+                return null;
             }
         }
 
