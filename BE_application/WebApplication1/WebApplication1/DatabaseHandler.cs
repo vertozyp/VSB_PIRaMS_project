@@ -125,5 +125,22 @@ namespace WebApplication1
             return (List<T>) session.CreateCriteria<T>().List<T>();
         }
 
+        public static string? GetMaxValue<T>(string propertyName) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return session.CreateCriteria<T>().
+                SetProjection(Projections.Max(propertyName))
+                .UniqueResult().ToString();
+        }
+
+        public static int? Insert<T>(T obj) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            var tx = session.BeginTransaction();
+            int? objId =  (int?) session.Save(obj);
+            tx.Commit();
+            return objId;
+        }
+
     }
 }

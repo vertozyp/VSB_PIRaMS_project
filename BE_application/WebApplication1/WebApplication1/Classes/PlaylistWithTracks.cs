@@ -4,6 +4,8 @@
     {
         public List<int> TrackIds { get; set; } = new List<int>();
 
+        public PlaylistWithTracks() { }
+
         public PlaylistWithTracks(Playlist playlist) : base(playlist.PlaylistId, playlist.Name, playlist.CustomerId)
         {
             List<PlaylistTrack> playlistTracks = DatabaseHandler.GetListByProperty<PlaylistTrack>("PlaylistId", playlist.PlaylistId);

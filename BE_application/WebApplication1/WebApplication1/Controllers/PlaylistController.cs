@@ -32,5 +32,32 @@ namespace WebApplication1.Controllers
 
             return playlistWithTracks;
         }
+
+        [HttpPost(Name = "playlist")]
+        public PlaylistWithTracks CreatePlaylist([FromBody] PlaylistRequest playlistRequest)
+        {
+            Right? right = Right.parseRequestAuthentication(Request);
+
+            int? playlistId;
+            if (right != null && !right.IsEmployee)
+                playlistId = DatabaseHandler.Insert<Playlist>(new Playlist(playlistRequest.Name, right.UserId));
+            else playlistId = DatabaseHandler.Insert<Playlist>(new Playlist(playlistRequest.Name, null));
+
+            if (playlistId != null)
+            {
+                foreach (int trackId in playlistRequest.TrackIds.Distinct().ToList())
+                    DatabaseHandler.Insert<PlaylistTrack>(new PlaylistTrack((int)playlistId, trackId));
+
+                Playlist newPlaylist = DatabaseHandler.GetById<Playlist>((int)playlistId);
+
+                Response.StatusCode = 201;
+                return new PlaylistWithTracks(newPlaylist);
+            }else
+            {
+                Response.StatusCode = 400;
+                return new PlaylistWithTracks();
+            }
+        }
+
     }
 }
