@@ -16,14 +16,24 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("/playlist")]
-        public List<PlaylistWithTracks> GetPlaylist(string? playlistName, string? trackName, string? trackComposer)
+        public List<PlaylistWithTracks> GetPlaylist(string? playlistName)
         {
             Right? right = Right.parseRequestAuthentication(Request);
             List<Playlist> playlists;
-            if (right != null && !right.IsEmployee) 
-                playlists = DatabaseHandler.GetListByPropertyOrEmpty<Playlist>("CustomerId", right.UserId);
-            else playlists = DatabaseHandler.GetListIfEmpty<Playlist>("CustomerId");
-
+            if (right != null && !right.IsEmployee)
+            {
+                if (playlistName != null)
+                    playlists = DatabaseHandler.GetFilteredListByPropertyOrEmpty<Playlist>("CustomerId", right.UserId, "Name", playlistName);
+                else
+                    playlists = DatabaseHandler.GetListByPropertyOrEmpty<Playlist>("CustomerId", right.UserId);
+            }
+            else
+            {
+                if (playlistName != null)
+                    playlists = DatabaseHandler.GetFilteredListIfEmpty<Playlist>("CustomerId", "Name", playlistName);
+                else
+                    playlists = DatabaseHandler.GetListIfEmpty<Playlist>("CustomerId");
+            }
             List <PlaylistWithTracks> playlistWithTracks = new List<PlaylistWithTracks>();
             foreach (Playlist playlist in playlists)
             {

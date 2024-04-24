@@ -177,5 +177,47 @@ namespace WebApplication1
             return;
         }
 
+        public static List<T> GetFilteredListByPropertyOrEmpty<T>(
+            string propertyName, object value, string filterName, string filterValue
+            ) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return (List<T>)session.CreateCriteria<T>()
+                .Add(Restrictions.And(
+                            Restrictions.Or(
+                                Restrictions.Eq(propertyName, value),
+                                Restrictions.IsNull(propertyName)),
+                            Restrictions.Like(filterName, "%" + filterValue + "%")
+                            ))
+                .List<T>();
+        }
+
+        public static List<T> GetFilteredListIfEmpty<T>(string propertyName, string filterName, string filterValue) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return (List<T>)session.CreateCriteria<T>()
+                .Add(Restrictions.And(
+                    Restrictions.IsNull(propertyName),
+                    Restrictions.Like(filterName, "%" + filterValue + "%")))
+                .List<T>();
+        }
+
+        public static List<T> GetAllFiltered<T>(string filterName, string filterValue) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return (List<T>)session.CreateCriteria<T>()
+                .Add(Restrictions.Like(filterName, "%" + filterValue + "%"))
+                .List<T>();
+        }
+
+        public static List<T> GetAllFiltered<T>(string filter1Name, string filter1Value, string filter2Name, string filter2Value) where T : class
+        {
+            var session = SessionFactory.OpenSession(); 
+            return (List<T>)session.CreateCriteria<T>()
+                .Add(Restrictions.And(
+                    Restrictions.Like(filter1Name, "%" + filter1Value + "%"),
+                    Restrictions.Like(filter2Name, "%" + filter2Value + "%")))
+                .List<T>();
+        }
     }
 }

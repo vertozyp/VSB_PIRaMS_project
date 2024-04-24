@@ -17,7 +17,20 @@ namespace WebApplication1.Controllers
         [HttpGet("/track")]
         public List<Track> GetTrack(string? name, string? composer)
         {
-            return DatabaseHandler.GetAll<Track>();
+            if (name == null)
+            {
+                if (composer == null)
+                    return DatabaseHandler.GetAll<Track>();
+                else
+                    return DatabaseHandler.GetAllFiltered<Track>("Composer", composer);
+            }
+            else
+            {
+                if (composer == null)
+                    return DatabaseHandler.GetAllFiltered<Track>("Name", name);
+                else
+                    return DatabaseHandler.GetAllFiltered<Track>("Name", name, "Composer", composer);
+            }
         }
     }
 }
