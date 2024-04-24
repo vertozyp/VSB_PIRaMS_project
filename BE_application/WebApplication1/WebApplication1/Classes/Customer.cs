@@ -6,9 +6,9 @@ namespace WebApplication1.Classes
     public class Customer
     {
         public virtual int CustomerId { get; set; }
-        public virtual required string LastName { get; set; }
-        public virtual required string FirstName { get; set; }
-        public virtual required string Email { get; set; }
+        public virtual string LastName { get; set; } = "";
+        public virtual string FirstName { get; set; } = "";
+        public virtual string Email { get; set; } = "";
         public virtual string? Phone { get; set; }
         public virtual string? Fax { get; set; }
         public virtual string? Company { get; set; }

@@ -19,7 +19,7 @@ namespace WebApplication1
         protected static Configuration? NHConfig;
         protected static ISessionFactory? SessionFactory;
 
-        private static Configuration ConfigureNHibernate() 
+        private static Configuration ConfigureNHibernate()
         {
             var configure = new Configuration();
             configure.SessionFactoryName("BuildIt");
@@ -40,17 +40,22 @@ namespace WebApplication1
 
             return configure;
         }
-    
+
         protected static HbmMapping GetMappings()
         {
             ModelMapper mapper = new ModelMapper();
 
             mapper.AddMapping<EmployeeMap>();
             mapper.AddMapping<CustomerMap>();
+            mapper.AddMapping<PlaylistMap>();
+            mapper.AddMapping<TrackMap>();
+            mapper.AddMapping<PlaylistTrackMap>();
 
-            return mapper.CompileMappingFor(new[] { typeof(Employee), typeof(Customer) });
+            return mapper.CompileMappingFor(new[]
+            { typeof(Employee), typeof(Customer), typeof(Playlist), typeof(Track), typeof(PlaylistTrack) }
+            );
         }
-    
+
         public static void Setup()
         {
             NHConfig = ConfigureNHibernate();
@@ -58,6 +63,12 @@ namespace WebApplication1
             NHConfig.AddDeserializedMapping(mapping, "WebApplication1");
             SchemaMetadataUpdater.QuoteTableAndColumns(NHConfig);
             SessionFactory = NHConfig.BuildSessionFactory();
+        }
+
+        public static T? GetById<T>(int id) where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return session.Get<T>(id);
         }
 
         public static T? GetByProperty<T>(string propertyName, object value) where T : class
@@ -70,10 +81,18 @@ namespace WebApplication1
                 .FirstOrDefault();
         }
 
-        public static T? GetById<T>(int id) where T : class
+        public static List<T> GetListByProperty<T>(string propertyName, object value) where T : class
         {
             var session = SessionFactory.OpenSession();
-            return session.Get<T>(id);
+            return (List<T>)session.CreateCriteria<T>()
+                .Add(Restrictions.Eq(propertyName, value))
+                .List<T>();
+        }
+
+        public static List<T> GetAll<T>() where T : class
+        {
+            var session = SessionFactory.OpenSession();
+            return (List<T>) session.CreateCriteria<T>().List<T>();
         }
 
     }

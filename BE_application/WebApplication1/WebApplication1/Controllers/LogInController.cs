@@ -14,21 +14,21 @@ namespace WebApplication1.Controllers
             _logger = logger;
         }
 
-        [HttpPost(Name = "LogIn")]
+        [HttpPost(Name = "login")]
         public Right LogIn([FromBody] Credentials credentials)
         {
             Employee? employee = DatabaseHandler.GetByProperty<Employee>("Email", credentials.Username);
             if (employee != null) 
             {
-                return new Right(employee.Email, true);
+                return new Right(employee.EmployeeId, employee.Email, true);
             }
             Customer? customer = DatabaseHandler.GetByProperty<Customer>("Email", credentials.Username);
             if (customer != null)
             {
-                return new Right(customer.Email, false);
+                return new Right(customer.CustomerId, customer.Email, false);
             }
             Response.StatusCode = 404;
-            return new Right("", false);
+            return new Right(-1, "", false);
 
         }
     }
