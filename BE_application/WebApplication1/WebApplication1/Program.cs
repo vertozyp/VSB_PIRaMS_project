@@ -3,7 +3,7 @@ using WebApplication1;
 var builder = WebApplication.CreateBuilder(args);
 
 // Setup DB connection
-DatabaseConnector.Setup();
+DatabaseHandler.Setup();
 
 // Add services to the container.
 builder.Services.AddControllers();

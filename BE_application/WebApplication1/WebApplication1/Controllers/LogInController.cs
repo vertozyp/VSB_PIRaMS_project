@@ -17,7 +17,18 @@ namespace WebApplication1.Controllers
         [HttpPost(Name = "LogIn")]
         public Right LogIn([FromBody] Credentials credentials)
         {
-            return new Right(credentials.Username,Competency.Customer);
+            Employee? employee = DatabaseHandler.GetByProperty<Employee>("Email", credentials.Username);
+            if (employee != null) 
+            {
+                return new Right(employee.Email, true);
+            }
+            Customer? customer = DatabaseHandler.GetByProperty<Customer>("Email", credentials.Username);
+            if (customer != null)
+            {
+                return new Right(customer.Email, false);
+            }
+            Response.StatusCode = 404;
+            return new Right("", false);
 
         }
     }

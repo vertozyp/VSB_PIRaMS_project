@@ -1,8 +1,8 @@
 ﻿namespace WebApplication1.Classes
 {
-    public class Right(string Username, Competency Competency)
+    public class Right(string Username, bool isEmployee)
     {
         public string Username { get; set; } = Username;
-        public Competency Competency { get; set; } = Competency;
+        public bool isEmployee { get; set; } = isEmployee;
     }
 }
