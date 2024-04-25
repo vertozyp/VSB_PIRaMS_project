@@ -31,7 +31,7 @@ export default function PlaylistFilter({ openCreate, setOpenCreate }) {
             .then(data => setPlaylists(data));
     }, [filterValue, right])
 
-    return <Box sx={{ display: 'inline-flex' }}>
+    return <Box sx={{ display: 'inline-flex', py: 3 }}>
         <TextField id="playlist-filter" label="Name" variant="outlined" value={filterValue} onChange={e => setFilterValue(e.target.value)} />
         {right ? <Button variant="contained" onClick={() => setOpenCreate(true)}>Create new</Button> : null}
     </Box>

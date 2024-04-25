@@ -17,20 +17,25 @@ export default function PlaylistDetailDialog({ onClose, selectedValue, open }) {
 
     const { playlists } = useContext(PlaylistsContext);
     const { tracks } = useContext(TracksContext);
-    const [actualDetail, setActualDetail] = useState({
-        playlistId: -1,
-        name: "",
-        public: true,
-        tracks: []
-    });
+    const [actualId, setActualId] = useState();
+    const [actualName, setActualName] = useState();
+    const [actualPuclic, setActualPublic] = useState();
+    const [actualtracks, setActualTracks] = useState();
+
+    function setActualDetail(detail) {
+        setActualId(detail.playlistId);
+        setActualName(detail.name);
+        setActualPublic(detail.customerId ? false : true);
+        setActualTracks(detail.tracks);
+    }
 
     useEffect(() => {
         if (playlists) {
-            let detail = playlists.filter((playlist) => playlist.playlistId === selectedValue)[0];
+            let detail = playlists.find((playlist) => playlist.playlistId === selectedValue);
             let trackList = [];
             if (detail) {
                 for (const trackId of detail.trackIds) {
-                    trackList.push(tracks.filter((track) => track.trackId === trackId)[0]);
+                    trackList.push(tracks.find((track) => track.trackId === trackId));
                 }
                 detail.tracks = trackList;
                 setActualDetail(detail);
@@ -50,9 +55,9 @@ export default function PlaylistDetailDialog({ onClose, selectedValue, open }) {
         <Dialog maxWidth="lg" onClose={() => { onClose(selectedValue) }} open={open}>
             <DialogTitle>Playlist detail</DialogTitle>
             <Box sx={{ display: 'inline-flex' }}>
-                <TextField id="playlist-detail-playlistId" label="Id" variant="outlined" InputProps={{ readOnly: true, }} value={actualDetail.playlistId} />
-                <TextField id="playlist-detail-name" label="Name" variant="outlined" InputProps={{ readOnly: true, }} value={actualDetail.name} />
-                <TextField id="playlist-detail-public" label="Public" variant="outlined" InputProps={{ readOnly: true, }} value={actualDetail.public} />
+                <TextField id="playlist-detail-playlistId" label="Id" variant="outlined" InputProps={{ readOnly: true, }} value={actualId} />
+                <TextField id="playlist-detail-name" label="Name" variant="outlined" InputProps={{ readOnly: true, }} value={actualName} />
+                <TextField id="playlist-detail-public" label="Public" variant="outlined" InputProps={{ readOnly: true, }} value={actualPuclic} />
             </Box>
             <DialogTitle>Tracks</DialogTitle>
             <TableContainer component={Paper}>
@@ -65,8 +70,8 @@ export default function PlaylistDetailDialog({ onClose, selectedValue, open }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>{
-                        actualDetail.tracks ?
-                            actualDetail.tracks.map(row => <RowTemplate key={row.trackId} item={row} />) :
+                        actualtracks ?
+                            actualtracks.map(row => <RowTemplate key={row.trackId} item={row} />) :
                             null}
                     </TableBody>
                 </Table>

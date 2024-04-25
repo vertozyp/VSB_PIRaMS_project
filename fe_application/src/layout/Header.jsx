@@ -4,11 +4,11 @@ import Login from '../components/Login';
 
 export default function Header() {
 
-    return <Stack direction="row" className="justify-content-around">
-        <QueueMusic />
-        <div>
+    return <Stack direction="row" className="justify-content-around" sx={{ py: 3, boxShadow: 1 }}>
+        <QueueMusic sx={{ fontSize: "4rem" }} />
+        <h1>
             Create your own playlist!
-        </div>
+        </h1>
         <Login />
     </Stack>
 }

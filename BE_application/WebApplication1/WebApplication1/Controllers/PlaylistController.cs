@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using WebApplication1.Classes;
 
 namespace WebApplication1.Controllers
@@ -16,7 +18,8 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("/playlist")]
-        public List<PlaylistWithTracks> GetPlaylist(string? playlistName)
+        public List<PlaylistWithTracks> GetPlaylist(string? playlistName, [FromHeader(Name = "X-AUTH-USERID")] string authUserid,
+            [FromHeader(Name = "X-AUTH-USERNAME")] string authUsername, [FromHeader(Name = "X-AUTH-ISEMPLOYEE")] string authIsEmployee)
         {
             Right? right = Right.parseRequestAuthentication(Request);
             List<Playlist> playlists;
@@ -44,7 +47,10 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost("/playlist")]
-        public PlaylistWithTracks? CreatePlaylist([FromBody] PlaylistRequest playlistRequest)
+        [SwaggerResponse(201, Type = typeof(PlaylistWithTracks))]
+        [SwaggerResponse(400)]
+        public PlaylistWithTracks? CreatePlaylist([FromBody] PlaylistRequest playlistRequest, [FromHeader(Name = "X-AUTH-USERID")][Required] string authUserid,
+            [FromHeader(Name = "X-AUTH-USERNAME")][Required] string authUsername, [FromHeader(Name = "X-AUTH-ISEMPLOYEE")][Required] string authIsEmployee)
         {
             Right? right = Right.parseRequestAuthentication(Request);
             if(right == null)
@@ -75,7 +81,11 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("/playlist/{playlistId}")]
-        public PlaylistWithTracks? GetPlaylistById([FromRoute] int playlistId)
+        [SwaggerResponse(200, Type = typeof(PlaylistWithTracks))]
+        [SwaggerResponse(401)]
+        [SwaggerResponse(404)]
+        public PlaylistWithTracks? GetPlaylistById([FromRoute] int playlistId, [FromHeader(Name = "X-AUTH-USERID")] string authUserid,
+            [FromHeader(Name = "X-AUTH-USERNAME")] string authUsername, [FromHeader(Name = "X-AUTH-ISEMPLOYEE")] string authIsEmployee)
         {
             Right? right = Right.parseRequestAuthentication(Request);
             Playlist? playlist = DatabaseHandler.GetById<Playlist>(playlistId);
@@ -103,7 +113,12 @@ namespace WebApplication1.Controllers
         }
 
         [HttpDelete("/playlist/{playlistId}")]
-        public void DeletePlaylistById([FromRoute] int playlistId)
+        [SwaggerResponse(204)]
+        [SwaggerResponse(401)]
+        [SwaggerResponse(404)]
+        public void DeletePlaylistById(
+            [FromRoute] int playlistId, [FromHeader(Name = "X-AUTH-USERID")][Required] string authUserid,
+            [FromHeader(Name = "X-AUTH-USERNAME")][Required] string authUsername, [FromHeader(Name = "X-AUTH-ISEMPLOYEE")][Required] string authIsEmployee)
         {
             Right? right = Right.parseRequestAuthentication(Request);
             Playlist? playlist = DatabaseHandler.GetById<Playlist>(playlistId);

@@ -33,7 +33,7 @@ export default function Body() {
             <TableCell><Info onClick={(event) => {
                 setDetailId(parseInt(event.currentTarget.parentElement.parentElement.children[0].getInnerHTML()));
                 setOpenDetail(true);
-            }} sx={{ cursor: 'pointer' }} /></TableCell>
+            }} color="primary" sx={{ cursor: 'pointer' }} /></TableCell>
             <TableCell>{
                 right != null && (
                     (item.customerId == null && right.isEmployee) ||
@@ -41,7 +41,7 @@ export default function Body() {
                     <Delete onClick={(event) => {
                         setIdToDelete(parseInt(event.currentTarget.parentElement.parentElement.children[0].getInnerHTML()));
                         setOpenDelete(true);
-                    }} sx={{ cursor: 'pointer' }} /> : null
+                    }} color="error" sx={{ cursor: 'pointer' }} /> : null
             }</TableCell>
         </TableRow>
     }
