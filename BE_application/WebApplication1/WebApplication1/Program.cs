@@ -5,6 +5,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Setup DB connection
 DatabaseHandler.Setup();
 
+// Allow CORS
+string CorsPolicyName = "DevOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: CorsPolicyName,
+                      builder => {builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();});
+});
+
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -22,6 +30,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseCors(CorsPolicyName);
 
 app.UseAuthorization();
 
