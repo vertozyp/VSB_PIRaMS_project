@@ -18,8 +18,8 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("/playlist")]
-        public List<PlaylistWithTracks> GetPlaylist(string? playlistName, [FromHeader(Name = "X-AUTH-USERID")] string authUserid,
-            [FromHeader(Name = "X-AUTH-USERNAME")] string authUsername, [FromHeader(Name = "X-AUTH-ISEMPLOYEE")] string authIsEmployee)
+        public List<PlaylistWithTracks> GetPlaylist(string? playlistName, [FromHeader(Name = "X-AUTH-USERID")] string? authUserid,
+            [FromHeader(Name = "X-AUTH-USERNAME")] string? authUsername, [FromHeader(Name = "X-AUTH-ISEMPLOYEE")] string? authIsEmployee)
         {
             Right? right = Right.parseRequestAuthentication(Request);
             List<Playlist> playlists;
@@ -84,8 +84,8 @@ namespace WebApplication1.Controllers
         [SwaggerResponse(200, Type = typeof(PlaylistWithTracks))]
         [SwaggerResponse(401)]
         [SwaggerResponse(404)]
-        public PlaylistWithTracks? GetPlaylistById([FromRoute] int playlistId, [FromHeader(Name = "X-AUTH-USERID")] string authUserid,
-            [FromHeader(Name = "X-AUTH-USERNAME")] string authUsername, [FromHeader(Name = "X-AUTH-ISEMPLOYEE")] string authIsEmployee)
+        public PlaylistWithTracks? GetPlaylistById([FromRoute] int playlistId, [FromHeader(Name = "X-AUTH-USERID")] string? authUserid,
+            [FromHeader(Name = "X-AUTH-USERNAME")] string? authUsername, [FromHeader(Name = "X-AUTH-ISEMPLOYEE")] string? authIsEmployee)
         {
             Right? right = Right.parseRequestAuthentication(Request);
             Playlist? playlist = DatabaseHandler.GetById<Playlist>(playlistId);

@@ -29,9 +29,9 @@ export default function LoginForm() {
             .then(data => setRight(data));
     }
 
-    return <FormControl sx={{ p: 2 }}>
+    return <FormControl sx={{ mx: 2, flex: 1 }}>
         <TextField id="login-form" label="Username" variant="outlined" value={inputValue} onChange={e => setInputValue(e.target.value)} />
-        <Button variant="contained" color="primary" type='submit' onClick={handleSubmit}>
+        <Button variant="contained" color="primary" type='submit' onClick={handleSubmit} sx={{ mx: 2, mt: 1 }}>
             Log in
         </Button>
     </FormControl>
